@@ -1,0 +1,34 @@
+version: '3'
+
+networks:
+  isolation-network:
+    driver: bridge
+
+services:
+  db:
+    image: postgres
+    networks:
+      - isolation-network
+  backend:
+    build: ./BOB-Backend
+    command: python3 manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./BOB-Backend:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    networks:
+      - isolation-network
+
+  frontend:
+    build: ./BOB-Frontend
+    command: npm run dev
+    volumes:
+      - ./BOB-Frontend:/app/code:rw
+    ports:
+      - "8080:8080"
+    depends_on:
+      - backend
+    networks:
+      - isolation-network
