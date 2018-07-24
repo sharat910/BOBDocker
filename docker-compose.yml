@@ -13,7 +13,7 @@ services:
     build: ./BOB-Backend
     command: python3 manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./BOB-Backend:/code
+      - ./BOB-Backend:/app/code
     ports:
       - "8000:8000"
     depends_on:
