@@ -4,7 +4,7 @@ import subprocess
 from datetime import datetime
 
 ROOT_PATH = "C:\\BOBDocker"
-BACKUP_PATH = ROOT_PATH + '\\BOB-Backend\\data_backup\\*.json'
+BACKUP_PATH = ROOT_PATH + '\\BOB-Backend\\data_backup'
 running_p = None
 
 def run():
@@ -34,13 +34,15 @@ def take_backup():
     if running_p:
         os.chdir(ROOT_PATH)
         date = datetime.today().date().strftime("%d-%m-%Y")
-        subprocess.run(["docker-compose","exec", "backend", "python", "manage.py", "dumpdata", "--format=json","main",">","data_backup/%s.json"%date], shell=True)
+        print("Saving data into %s.json..." % date)
+        command = "python manage.py dumpdata main > data_backup/%s.json"%date
+        subprocess.run(["docker-compose","exec", "backend","sh", "-c", command], shell=True)
         print("\nBackup complete!")
     else:
         print("Please run the application first.")
 
 def get_latest_file():
-    list_of_files = glob.glob(BACKUP_PATH)
+    list_of_files = glob.glob(BACKUP_PATH + "\\*.json")
     latest_file = max(list_of_files, key=os.path.getctime)
     return latest_file
 
