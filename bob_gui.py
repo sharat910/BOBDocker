@@ -58,7 +58,7 @@ def restore_last_backup():
     else:
         print("Please run the application first.")
 
-def update():
+def update(no_cache=False):
     if running_p:
         print("Stop the application using CTRL + C before updating..")
         return
@@ -71,7 +71,10 @@ def update():
     os.chdir("BOB-Frontend")
     subprocess.run(['git','pull'])
     os.chdir(ROOT_PATH)
-    subprocess.run(['docker-compose','build'])
+    if no_cache:
+        subprocess.run(['docker-compose','build','--no-cache'])
+    else:
+        subprocess.run(['docker-compose','build'])
     print("Update completed!")
 
 
@@ -83,19 +86,25 @@ window.geometry("400x50")
 
 menubar = Menu(window)
 
-adv_menu = Menu(menubar, tearoff=0)
-adv_menu.add_command(label="Update", command=update)
-adv_menu.add_separator()
-adv_menu.add_command(label="Migrate", command=migrate)
-adv_menu.add_separator()
-adv_menu.add_command(label="Exit", command=window.quit)
-menubar.add_cascade(label="Advanced", menu=adv_menu)
+file_menu = Menu(menubar, tearoff=0)
+file_menu.add_command(label="Exit", command=window.quit)
+menubar.add_cascade(label="File", menu=file_menu)
 
 backup_menu = Menu(menubar, tearoff=0)
 backup_menu.add_command(label="Take Backup", command=take_backup)
 backup_menu.add_separator()
 backup_menu.add_command(label="Restore latest", command=restore_last_backup)
 menubar.add_cascade(label="Backup", menu=backup_menu)
+
+upd_menu = Menu(menubar, tearoff=0)
+upd_menu.add_command(label="Update", command=update)
+backup_menu.add_separator()
+upd_menu.add_command(label="Update with rebuild", command= lambda: update(True))
+menubar.add_cascade(label="Update", menu=upd_menu)
+
+adv_menu = Menu(menubar, tearoff=0)
+adv_menu.add_command(label="Migrate", command=migrate)
+menubar.add_cascade(label="Advanced", menu=adv_menu)
 
 frame = Frame(window)
 frame.pack()
