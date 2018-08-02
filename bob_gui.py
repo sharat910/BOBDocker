@@ -58,6 +58,21 @@ def restore_last_backup():
     else:
         print("Please run the application first.")
     
+def update():
+    if running_p:
+        print("Stop the application using CTRL + C before updating..")
+        return
+    print("Updating application...")
+    os.chdir(ROOT_PATH)
+    subprocess.run(['git','pull'])
+    os.chdir("BOB-Backend")
+    subprocess.run(['git','pull'])
+    os.chdir(ROOT_PATH)
+    os.chdir("BOB-Frontend")
+    subprocess.run(['git','pull'])
+    os.chdir(ROOT_PATH)
+    subprocess.run(['docker-compose','build'])
+    print("Update completed!")
 
 
 
@@ -72,7 +87,7 @@ frame.pack()
 button_1 = Button(frame,text="Run", width=10,command=run)
 button_1.pack(side=LEFT)
 
-button_2 = Button(frame,text="Migrate", width=10,command=migrate)
+button_2 = Button(frame,text="Update", width=10,command=update)
 button_2.pack(side=LEFT)
 
 button_3 = Button(frame,text="Backup", width=10,command=take_backup)
