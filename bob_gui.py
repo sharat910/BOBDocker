@@ -12,7 +12,7 @@ def run():
     os.chdir(ROOT_PATH)
     print("Starting application... To quit press CTRL + C")
     running_p = subprocess.Popen(["docker-compose","up"], shell=True)
-    
+
 
 def stop():
     global running_p
@@ -57,7 +57,7 @@ def restore_last_backup():
         print("\Restore complete!")
     else:
         print("Please run the application first.")
-    
+
 def update():
     if running_p:
         print("Stop the application using CTRL + C before updating..")
@@ -81,19 +81,36 @@ window.title("BOB Application")
 
 window.geometry("400x50")
 
+menubar = Menu(window)
+
+adv_menu = Menu(menubar, tearoff=0)
+adv_menu.add_command(label="Update", command=update)
+adv_menu.add_separator()
+adv_menu.add_command(label="Migrate", command=migrate)
+adv_menu.add_separator()
+adv_menu.add_command(label="Exit", command=window.quit)
+menubar.add_cascade(label="Advanced", menu=adv_menu)
+
+backup_menu = Menu(menubar, tearoff=0)
+backup_menu.add_command(label="Take Backup", command=take_backup)
+backup_menu.add_separator()
+backup_menu.add_command(label="Restore latest", command=restore_last_backup)
+menubar.add_cascade(label="Backup", menu=backup_menu)
+
 frame = Frame(window)
 frame.pack()
 
-button_1 = Button(frame,text="Run", width=10,command=run)
+button_1 = Button(frame,text="Run", width=30,command=run)
 button_1.pack(side=LEFT)
 
-button_2 = Button(frame,text="Update", width=10,command=update)
-button_2.pack(side=LEFT)
 
-button_3 = Button(frame,text="Backup", width=10,command=take_backup)
-button_3.pack(side=LEFT)
-
-button_4 = Button(frame,text="Restore", width=10,command=restore_last_backup)
-button_4.pack(side=LEFT)
-
+# button_2 = Button(frame,text="Update", width=10,command=update)
+# button_2.pack(side=LEFT)
+#
+# button_3 = Button(frame,text="Backup", width=10,command=take_backup)
+# button_3.pack(side=LEFT)
+#
+# button_4 = Button(frame,text="Restore", width=10,command=restore_last_backup)
+# button_4.pack(side=LEFT)
+window.config(menu=menubar)
 window.mainloop()
